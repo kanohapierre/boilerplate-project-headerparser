@@ -3,7 +3,13 @@
 
 // init project
 var express = require('express');
+let bodyParser = require('body-parser');
+let useragent = require('express-useragent');
 var app = express();
+
+app.use(bodyParser.json());
+app.use(useragent.express());
+
 
 // enable CORS (https://en.wikipedia.org/wiki/Cross-origin_resource_sharing)
 // so that your API is remotely testable by FCC 
@@ -24,7 +30,19 @@ app.get("/api/hello", function (req, res) {
   res.json({greeting: 'hello API'});
 });
 
+// parser 
 
+app.get("/api/whoami", (req,res) => {
+  
+  let headers = req.headers;
+  let ipaddress = headers["x-forwarded-for"].split(",")[0];
+  let language = headers["accept-language"];
+  let software = headers["user-agent"];
+  
+  res.json({ 
+    ipaddress, language, software
+  });
+})
 
 // listen for requests :)
 var listener = app.listen(process.env.PORT, function () {
